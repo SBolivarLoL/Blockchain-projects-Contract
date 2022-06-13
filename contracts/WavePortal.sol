@@ -23,7 +23,7 @@ contract WavePortal {
      */
     Wave[] waves;
 
-    constructor() {
+    constructor() payable { //payable is a function that allows me to send ether to the contract
         console.log("I AM SMART CONTRACT. POG.");
     }
 
@@ -45,6 +45,15 @@ contract WavePortal {
          * see the transaction at the front-end
          */
         emit NewWave(msg.sender, block.timestamp, _message);
+
+        uint256 prizeAmount = 0.0001 ether;
+
+        require(
+            prizeAmount <= address(this).balance,
+            "Trying to withdraw more than the contract has"
+        );
+        (bool success, ) = (msg.sender).call{value: prizeAmount}("");
+        require(success, "Failed to withdraw money from contract"); //Here I am checking if the withdrawl was successful, if not the message will be displayed.
     }
 
     /*
